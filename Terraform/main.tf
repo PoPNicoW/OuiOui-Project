@@ -7,6 +7,25 @@ resource "aws_instance" "nginx01" {
   key_name = "NicoKey"
   vpc_security_group_ids = ["${aws_security_group.nginx01_SEC.id}"]
 
+provisioner "file" {
+  source = "/home/script/install_python.sh"
+  destination = "/tmp/install_pyhton.sh"
+  }
+
+provisioner "remote-exec" {
+  inline=[
+  "chmod +x /tmp/install_python.sh",
+  "sudo /tmp/install_python.sh",
+  ]
+  }
+
+
+connection {
+  user = "ubuntu"
+  private_key = "${file("/home/NicoKey.pem")}"
+  }
+
+
 tags { 
   Name = "nginx01"
     }
