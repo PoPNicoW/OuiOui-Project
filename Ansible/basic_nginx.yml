@@ -1,0 +1,18 @@
+---
+- hosts: EC2_HOST
+  gather_facts: False
+  remote_user: ubuntu
+
+  tasks:
+    - name: install nginx
+      apt: 
+        name: nginx
+        state: present
+      become: yes
+    - name: start nginx 
+      service: 
+        name: nginx
+        state: started
+      become: yes
+   
+

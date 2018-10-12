@@ -7,18 +7,12 @@ resource "aws_instance" "nginx01" {
   key_name = "NicoKey"
   vpc_security_group_ids = ["${aws_security_group.nginx01_SEC.id}"]
 
-provisioner "file" {
-  source = "/home/script/install_python.sh"
-  destination = "/tmp/install_pyhton.sh"
-  }
-
 provisioner "remote-exec" {
   inline=[
-  "chmod +x /tmp/install_python.sh",
-  "sudo /tmp/install_python.sh",
+  "sudo apt update",
+  "sudo apt install -y python",
   ]
-  }
-
+}
 
 connection {
   user = "ubuntu"
@@ -48,9 +42,19 @@ resource "aws_security_group" "nginx01_SEC" {
      protocol =  "tcp"
      cidr_blocks = ["0.0.0.0/0"]
    }
-}
+
+  egress {
+     from_port = 0
+     to_port = 0
+     protocol = "-1"
+     cidr_blocks = ["0.0.0.0/0"]
+  }
+} 
 
 output "public_ip_nginx01" {
   value = "${aws_instance.nginx01.public_ip}"
 }
   
+output "dns_public_nginx01" {
+  value = "${aws_instance.nginx01.public_dns}"
+}
