@@ -1,0 +1,48 @@
+---
+- hosts: EC2_HOST
+  gather_facts: False
+  remote_user: ubuntu
+
+  tasks:
+    - name: install nginx
+      apt: 
+        name: nginx
+        state: present
+      become: yes
+
+    - name: Create directory
+      file:
+        path: /home/script
+        state: directory
+        mode: 0755
+      become: yes
+
+    - name: Copy webapi
+      copy:
+        src: /home/script/webapi.py
+        dest: /home/script/webapi.py
+        mode: 0755
+      become: yes
+
+    - name: Install Python PIP
+      apt:
+        name: python-pip
+        state: present
+      become: yes
+
+    - name: Module python
+      pip:
+        name: "{{item}}"
+      with_items: 
+        - mysql-connector-python
+        - flask
+        - flask-restful
+      become: yes
+
+    - name: start nginx 
+      service: 
+        name: nginx
+        state: started
+      become: yes
+   
+
